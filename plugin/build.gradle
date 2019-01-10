@@ -1,0 +1,31 @@
+apply plugin: 'groovy'
+//使用 bintray-release 插件
+apply plugin: 'com.novoda.bintray-release'
+
+repositories {
+    jcenter()
+    google()
+}
+
+dependencies {
+    //build tools
+    compile 'com.android.tools.build:gradle:3.1.2'
+
+    //gradle sdk
+    compile gradleApi()
+    //groovy sdk
+    compile localGroovy()
+
+    compile 'org.javassist:javassist:3.20.0-GA'
+}
+
+publish {
+    groupId = "com.dovar.plugin"
+    artifactId = "router"
+    publishVersion = "1.0.0"
+    //项目描述
+    desc = 'Router Plugin'
+    //项目网址，建议github开源库网址
+    website = 'https://github.com/Dovar66'
+}
+
