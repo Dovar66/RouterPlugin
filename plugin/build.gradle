@@ -1,80 +1,37 @@
-// First, apply the publishing plugin
-plugins {
-//    id "com.gradle.plugin-publish" version "0.10.0"
-//    id "java-gradle-plugin"
-    id 'groovy'
-    id 'maven'
-    id 'maven-publish'
-    id 'com.jfrog.bintray'
-}
+apply plugin: 'groovy'
+//使用 bintray-release 插件
+apply plugin: 'com.novoda.bintray-release'
 
 repositories {
-    mavenCentral()
     jcenter()
     google()
 }
 
 dependencies {
-    compile 'com.android.tools.build:gradle:3.1.2'
+    implementation 'com.android.tools.build:gradle:3.1.2'
 
     //gradle sdk
-    compile gradleApi()
+    implementation gradleApi()
     //groovy sdk
-    compile localGroovy()
+    implementation localGroovy()
 
-    compile 'org.javassist:javassist:3.20.0-GA'
+    implementation 'org.javassist:javassist:3.20.0-GA'
 }
 
-/*// Use java-gradle-plugin to generate plugin descriptors and specify plugin ids
-gradlePlugin {
-    plugins {
-        greetingsPlugin {
-            id = 'com.dovar.router'
-            implementationClass = 'com.dovar.plugin.RouterPlugin'
-        }
-    }
+publish {
+    groupId = "com.dovar.router"
+    artifactId = "maven"
+    publishVersion = "1.0.0"
+    //项目描述
+    desc = 'Router Plugin'
+    //项目网址，建议github开源库网址
+    website = 'https://github.com/Dovar66'
+    //bintray 的用户名
+    bintrayUser = 'visoc6636'
+    //bintray 用户名
+    userOrg = 'visoc6636'
+    //API Key
+    bintrayKey = "c668710f50e113ced195a5873e4265c359691fc7"
+    dryRun = false
 }
 
-// The configuration example below shows the minimum required properties
-// configured to publish your plugin to the plugin portal
-pluginBundle {
-    website = 'https://github.com/Dovar66/RouterPlugin'
-    vcsUrl = 'https://github.com/Dovar66/RouterPlugin'
-    description = 'Router Plugin'
-    tags = ['router']
-
-    plugins {
-        greetingsPlugin {
-            // id is captured from java-gradle-plugin configuration
-            displayName = 'router plugin'
-        }
-    }
-}
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-
-            groupId 'com.whyn.plugin'
-            artifactId 'ynplugin'
-            version '1.0.0'
-
-            from components.java
-
-        }
-    }
-}
-
-publishing {
-    repositories {
-        maven {
-            // change to point to your repo, e.g. http://my.org/repo
-            url uri('D:/Android/repos')
-        }
-    }
-}*/
-
-group = "com.dovar.plugin"
-version = "1.0.0"
-
-apply from: 'bintray.gradle'
