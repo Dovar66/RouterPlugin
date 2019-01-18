@@ -1,6 +1,9 @@
-apply plugin: 'groovy'
-//使用 bintray-release 插件
-apply plugin: 'com.novoda.bintray-release'
+plugins {
+    id 'groovy'
+
+    id "java-gradle-plugin"
+    id "com.gradle.plugin-publish" version "0.10.0"
+}
 
 repositories {
     jcenter()
@@ -8,30 +11,37 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.android.tools.build:gradle:3.1.2'
-
-    //gradle sdk
     implementation gradleApi()
-    //groovy sdk
     implementation localGroovy()
 
+    implementation 'com.android.tools.build:gradle:3.1.2'
     implementation 'org.javassist:javassist:3.20.0-GA'
 }
 
-publish {
-    groupId = "com.dovar.router"
-    artifactId = "maven"
-    publishVersion = "1.0.0"
-    //项目描述
-    desc = 'Router Plugin'
-    //项目网址，建议github开源库网址
-    website = 'https://github.com/Dovar66'
-    //bintray 的用户名
-    bintrayUser = 'visoc6636'
-    //bintray 用户名
-    userOrg = 'visoc6636'
-    //API Key
-    bintrayKey = "c668710f50e113ced195a5873e4265c359691fc7"
-    dryRun = false
+// The configuration example below shows the minimum required properties
+// configured to publish your plugin to the plugin portal
+pluginBundle {
+    website = 'https://github.com/Dovar66/RouterPlugin'
+    vcsUrl = 'https://github.com/Dovar66/RouterPlugin'
+    tags = ['router','plugin']
+    description = 'Router Plugin'
+
+    plugins {
+        routerPlugin {
+            // id is captured from java-gradle-plugin configuration
+            displayName = 'router plugin'
+        }
+    }
+}
+
+// Use java-gradle-plugin to generate plugin descriptors and specify plugin ids
+gradlePlugin {
+    plugins {
+        routerPlugin {
+            id = 'com.dovar.router.plugin'
+            implementationClass = 'com.dovar.plugin.RouterPlugin'
+            version = '1.0.0'
+        }
+    }
 }
 
