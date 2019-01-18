@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.2'
+        classpath 'com.android.tools.build:gradle:3.2.1'
     }
 }
 
@@ -16,13 +16,6 @@ allprojects {
     repositories {
         google()
         jcenter()
-    }
-
-    //添加 utf-8 的支持，避免中文注释生成 Javadoc 文件出现编码错误
-    tasks.withType(Javadoc) {
-        options {
-            encoding "UTF-8" charSet 'UTF-8' links "http://docs.oracle.com/javase/7/docs/api"
-        }
     }
 }
 
