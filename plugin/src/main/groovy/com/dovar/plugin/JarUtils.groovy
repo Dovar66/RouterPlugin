@@ -14,9 +14,6 @@ class JarUtils {
      * @return 返回该jar包中包含的所有class的完整类名类名集合，其中一条数据如：com.aitski.hotpatch.Xxxx.class
      */
     static List<String> unzipJar(String jarPath, String destDirPath) {
-
-        println "unzipJar,jarPath:"+jarPath
-
         List<String> list = new ArrayList()
         if (jarPath.endsWith('.jar')) {
 
@@ -39,8 +36,6 @@ class JarUtils {
                 }
 
                 String outFileName = destDirPath + File.separator + entryName
-                //println "outFileName:"+outFileName
-
                 File outFile = new File(outFileName)
                 outFile.getParentFile().mkdirs()
                 InputStream inputStream = jarFile.getInputStream(jarEntry)
@@ -60,24 +55,11 @@ class JarUtils {
      * @param destPath 打包好的jar包的绝对路径
      */
     static void zipJar(String packagePath, String destPath) {
-
-        println "zipJar,packagePath:"+packagePath+",destPath:"+destPath
-
         File file = new File(packagePath)
         JarOutputStream outputStream = new JarOutputStream(new FileOutputStream(destPath))
         file.eachFileRecurse { File f ->
-
-            //println "f.getAbsolutePath():"+f.getAbsolutePath()
-
             String entryName = f.getAbsolutePath().substring(packagePath.length() + 1)
-            //println "before replace,entryName:"+entryName
-
-            entryName=entryName.replaceAll("\\\\","/")
-
-            //println "after replace,entryName:"+entryName
-
-            //println "entryName:"+entryName
-
+            entryName = entryName.replaceAll("\\\\", "/")
             outputStream.putNextEntry(new ZipEntry(entryName))
             if (!f.directory) {
                 InputStream inputStream = new FileInputStream(f)

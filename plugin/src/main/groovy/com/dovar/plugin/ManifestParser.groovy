@@ -30,8 +30,6 @@ class ManifestParser {
             //首字母大写进行拼接
             variantName += it.capitalize()
         }
-        println ">>> variantName:${variantName}"
-
         //获取processManifestTask
         def processManifestTask = project.tasks.getByName("process${variantName}Manifest")
 
@@ -54,10 +52,6 @@ class ManifestParser {
             if (manifestOutputFile == null && instantRunManifestOutputFile == null) {
                 throw new GradleException("can't get manifest file")
             }
-
-            //打印
-            println " manifestOutputFile:${manifestOutputFile} ${manifestOutputFile.exists()}"
-            println " instantRunManifestOutputFile:${instantRunManifestOutputFile} ${instantRunManifestOutputFile.exists()}"
 
             //先设置为正常的manifest
             result = manifestOutputFile
@@ -83,9 +77,6 @@ class ManifestParser {
             if (!result.exists()) {
                 println ' AndroidManifest.xml not exist'
             }
-            //输出路径
-            println " AndroidManifest.xml 路径：$result"
-
             return result.absolutePath
         }
 

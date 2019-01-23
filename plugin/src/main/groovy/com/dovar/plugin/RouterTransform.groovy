@@ -42,9 +42,6 @@ class RouterTransform extends Transform {
 
     @Override
     void transform(TransformInvocation transformInvocation) throws TransformException, InterruptedException, IOException {
-
-        println "RouterTransform-->transform"
-
         //step1:将所有类的路径加入到ClassPool中
         ClassPool classPool = new ClassPool()
         project.android.bootClasspath.each {
@@ -57,9 +54,6 @@ class RouterTransform extends Transform {
         this.stubServiceMatchInjector = new StubServiceMatchInjector(classPool, serviceGenerator, project.rootDir.absolutePath)
         //遍历input
         transformInvocation.inputs.each { TransformInput input ->
-
-            println("----------TransformInput-------------")
-
             //遍历文件夹
             input.directoryInputs.each { DirectoryInput directoryInput ->
 

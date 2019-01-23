@@ -12,7 +12,8 @@ class StubServiceGenerator {
     def static final ENABLED = 'android:enabled'
     def static final FALSE = 'false'
     def static final TRUE = 'true'
-    def static final STUB_SERVICE = 'com.dovar.router_api.multiprocess.ConnectMultiRouterService$ConnectMultiRouterService'
+    def static
+    final STUB_SERVICE = 'com.dovar.router_api.multiprocess.ConnectMultiRouterService$ConnectMultiRouterService'
 
     def public static final MATCH_DIR = "build"
     def public static final MATCH_FILE_NAME = "match_stub.txt"
@@ -20,11 +21,8 @@ class StubServiceGenerator {
     private Map<String, String> matchedServices
 
     private String rootDirPath
-    private String pkgName
 
     void injectStubServiceToManifest(Project project) {
-
-        println "injectStubServiceToManifest"
 
         rootDirPath = project.rootDir.absolutePath
 
@@ -32,18 +30,9 @@ class StubServiceGenerator {
 
         project.afterEvaluate {
             android.applicationVariants.all { variant ->
-
-                if (pkgName == null) {
-                    pkgName = getPackageName(variant)
-                    println "pkgName:" + pkgName
-                }
-
                 variant.outputs.each { output ->
 
                     output.processManifest.doLast {
-
-                        println "manifestOutputDirectory:" + output.processManifest.manifestOutputDirectory.absolutePath
-
                         //output.getProcessManifest().manifestOutputDirectory
                         output.processManifest.outputs.files.each { File file ->
                             //在gradle plugin 3.0.0之前，file是文件，且文件名为AndroidManifest.xml
@@ -67,9 +56,6 @@ class StubServiceGenerator {
     }
 
     private void injectManifestFile(File manifestFile) {
-
-        println "injectManifestFile"
-
         //检测文件是否存在
         if (manifestFile != null && manifestFile.exists()) {
 
@@ -85,13 +71,6 @@ class StubServiceGenerator {
         } else {
             println "Attention!manifest file may not exist!"
         }
-    }
-
-    def getPackageName(variant) {
-        if (null == variant) {
-            return null
-        }
-        [variant.mergedFlavor.applicationId, variant.buildType.applicationIdSuffix].findAll().join()
     }
 
     Map<String, String> getMatchServices() {
@@ -125,41 +104,6 @@ class StubServiceGenerator {
 
                 ++index
             }
-
-            //之后，写入DispatcherService和DispatcherProvider
-            /*def dispatcherProcess = dispatcher.process
-            println "dispatcher.process:" + dispatcher.process
-            if (dispatcherProcess != null && dispatcherProcess.length() > 0) {
-                service("${NAME}": DISPATCHER_SERVICE,
-                        "${ENABLED}": "${TRUE}",
-                        "${EXPORTED}": "${FALSE}",
-                        "${PROCESS}": dispatcherProcess
-                )
-
-                provider(
-                        "${AUTHORITIES}": getAuthority(),
-                        "${EXPORTED}": "${FALSE}",
-                        "${NAME}": DISPTACHER_PROVIDER,
-                        "${ENABLED}": "${TRUE}",
-                        "${PROCESS}": dispatcherProcess
-                )
-
-            } else {
-                service("${NAME}": DISPATCHER_SERVICE,
-                        "${ENABLED}": "${TRUE}",
-                        "${EXPORTED}": "${FALSE}"
-                )
-
-                provider(
-                        "${AUTHORITIES}": getAuthority(),
-                        "${EXPORTED}": "${FALSE}",
-                        "${NAME}": DISPTACHER_PROVIDER,
-                        "${ENABLED}": "${TRUE}"
-                )
-
-            }*/
-
-
         }
 
         // 删除 application 标签
@@ -169,9 +113,6 @@ class StubServiceGenerator {
     }
 
     private void writeStubService2File(String dirPath, String fileName) {
-
-        println "dirPath:" + dirPath + ",fileName:" + fileName
-
         File dir = new File(dirPath)
         if (!dir.exists()) {
             dir.mkdirs()

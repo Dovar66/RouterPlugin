@@ -11,7 +11,8 @@ import java.util.jar.JarFile
 
 class StubServiceMatchInjector {
 
-    private static final String STUB_SERVICE_MATCHER = "com.dovar.router_api.multiprocess.MultiRouter"
+    private static
+    final String STUB_SERVICE_MATCHER = "com.dovar.router_api.multiprocess.MultiRouter"
 
     private static final String STUB_SERVICE_MATCHER_CLASS = "MultiRouter.class"
 
@@ -32,7 +33,6 @@ class StubServiceMatchInjector {
     }
 
     private void readMatchedServices(String dirPath, String fileName) {
-        println "readMatchedServices()"
         File dir = new File(dirPath)
         if (!dir.exists()) {
             return
@@ -47,7 +47,6 @@ class StubServiceMatchInjector {
         while ((content = reader.readLine()) != null) {
             String[] matchKeyValues = content.split(",")
             if (matchKeyValues != null) {
-                println "read key:" + matchKeyValues[0] + ",value:" + matchKeyValues[1]
                 matchedServices.put(matchKeyValues[0], matchKeyValues[1])
             }
         }
@@ -83,8 +82,6 @@ class StubServiceMatchInjector {
     }
 
     private void prepareInjectMatchCode(String filePath) {
-        println "prepareInjectMatchCode"
-
         File jarFile = new File(filePath)
         String jarDir = jarFile.getParent() + File.separator + jarFile.getName().replace('.jar', '')
 
@@ -123,9 +120,6 @@ class StubServiceMatchInjector {
 
     //这个className含有.class,而实际上要获取CtClass的话只需要前面那部分，即"org.qiyi.video.svg.utils.StubServiceMatcher"而不是"org.qiyi.video.svg.utils.StubServiceMatcher.class"
     private void doInjectMatchCode(String path) {
-
-        println "doInjectMatchCode"
-
         //首先获取服务信息
         fetchServiceInfo()
 
@@ -148,7 +142,6 @@ class StubServiceMatchInjector {
             code.append("matchedServices.put(\"" + it.getKey() + "\"," + it.getValue() + ".class);\n")
         }
         code.append('return matchedServices;\n}')
-        println(code.toString())
         getTargetServiceMethod.insertBefore(code.toString())
 
         ctClass.writeFile(path)
