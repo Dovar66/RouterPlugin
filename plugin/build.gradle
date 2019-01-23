@@ -11,11 +11,11 @@ repositories {
 }
 
 dependencies {
-    implementation gradleApi()
-    implementation localGroovy()
+    compile gradleApi()
+    compile localGroovy()
 
-    implementation 'org.javassist:javassist:3.20.0-GA'
-    implementation 'com.android.tools.build:gradle:3.2.1'
+    compile 'org.javassist:javassist:3.20.0-GA'
+    compile 'com.android.tools.build:gradle:3.0.1'
 }
 
 // The configuration example below shows the minimum required properties
@@ -40,7 +40,7 @@ gradlePlugin {
         routerPlugin {
             id = 'com.dovar.router.plugin'
             implementationClass = 'com.dovar.plugin.RouterPlugin'
-            version = '1.1.6'
+            version = '1.1.8'
         }
     }
 }
