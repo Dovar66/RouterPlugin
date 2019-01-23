@@ -18,6 +18,6 @@ class RouterPlugin implements Plugin<Project> {
 
         def android = project.extensions.findByType(AppExtension)
         android.registerTransform(new RouterTransform(project,stubServiceGenerator))
-        println("================自定义插件成功！==========")
+        println("================apply router plugin==========")
     }
 }
