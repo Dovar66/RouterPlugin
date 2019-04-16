@@ -22,19 +22,22 @@ class RouterTransform extends Transform {
 
     @Override
     String getName() {
-        return "RouterTransform"
+        return RouterTransform.simpleName
     }
 
+    //限定输入类型
     @Override
     Set<QualifiedContent.ContentType> getInputTypes() {
         return TransformManager.CONTENT_CLASS
     }
 
+    //限定输入文件所属的范围
     @Override
     Set<? super QualifiedContent.Scope> getScopes() {
         return TransformManager.SCOPE_FULL_PROJECT
     }
 
+    //是否支持增量编译
     @Override
     boolean isIncremental() {
         return false
