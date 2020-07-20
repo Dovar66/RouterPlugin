@@ -55,11 +55,20 @@ class RouterTransform extends Transform {
         ClassAppender.appendAllClasses(transformInvocation.getInputs(), classPool)
 
         this.stubServiceMatchInjector = new StubServiceMatchInjector(classPool, serviceGenerator, project.rootDir.absolutePath)
-        //遍历input
+        //第一次遍历只找目标文件
+        transformInvocation.inputs.each { TransformInput input ->
+            input.directoryInputs.each { DirectoryInput directoryInput ->
+                stubServiceMatchInjector.lookupDirectory(directoryInput.file)
+            }
+
+            input.jarInputs.each { JarInput jarInput ->
+                stubServiceMatchInjector.lookupJar(jarInput)
+            }
+        }
+        //第二次遍历时注入代码，并将input输出到dest
         transformInvocation.inputs.each { TransformInput input ->
             //遍历文件夹
             input.directoryInputs.each { DirectoryInput directoryInput ->
-
                 //获取output目录
                 def dest = transformInvocation.outputProvider.getContentLocation(directoryInput.name,
                         directoryInput.contentTypes, directoryInput.scopes, Format.DIRECTORY)
@@ -85,6 +94,4 @@ class RouterTransform extends Transform {
             }
         }
     }
-
-
 }

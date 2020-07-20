@@ -11,12 +11,10 @@ import java.util.jar.JarFile
 
 class StubServiceMatchInjector {
 
-    private static
-    final String STUB_SERVICE_MATCHER = "com.dovar.router_api.multiprocess.MultiRouter"
-
-    private static final String STUB_SERVICE_MATCHER_CLASS = "MultiRouter.class"
-
+    private static final String STUB_SERVICE_MATCHER = "com.dovar.router_api.router.cache.JavassistGenerateMethod"
+    private static final String STUB_SERVICE_MATCHER_CLASS = "JavassistGenerateMethod.class"
     private static final String GET_TARGET_SERVICE = "getTargetService"
+    private static final String GET_PROXY_CLASSES = "getProxyClassNames"
 
     private ClassPool classPool
     private String rootDirPath
@@ -92,7 +90,6 @@ class StubServiceMatchInjector {
         jarFile.delete()
 
         //注入代码
-        //classPool.insertClassPath(jarDir)
         classPool.appendClassPath(jarDir)
 
         for (String className : classNameList) {
@@ -107,7 +104,6 @@ class StubServiceMatchInjector {
 
         //删除目录
         FileUtils.deleteDirectory(new File(jarDir))
-
     }
 
     private void fetchServiceInfo() {
@@ -118,7 +114,7 @@ class StubServiceMatchInjector {
         }
     }
 
-    //这个className含有.class,而实际上要获取CtClass的话只需要前面那部分，即"org.qiyi.video.svg.utils.StubServiceMatcher"而不是"org.qiyi.video.svg.utils.StubServiceMatcher.class"
+    //这个className含有.class,而实际上要获取CtClass的话只需要前面那部分
     private void doInjectMatchCode(String path) {
         //首先获取服务信息
         fetchServiceInfo()
@@ -129,12 +125,16 @@ class StubServiceMatchInjector {
         }
         CtMethod[] ctMethods = ctClass.getDeclaredMethods()
         CtMethod getTargetServiceMethod = null
+        CtMethod getProxyClassesMethod = null
         ctMethods.each {
             if (GET_TARGET_SERVICE.equals(it.getName())) {
                 getTargetServiceMethod = it
+            } else if (GET_PROXY_CLASSES.equals(it.getName())) {
+                getProxyClassesMethod = it
             }
         }
 
+        //注入getTargetService()
         StringBuilder code = new StringBuilder()
         //注意:javassist的编译器不支持泛型
         code.append("{\njava.util.Map matchedServices=new java.util.HashMap();\n")
@@ -144,6 +144,57 @@ class StubServiceMatchInjector {
         code.append('return matchedServices;\n}')
         getTargetServiceMethod.insertBefore(code.toString())
 
+        //注入getProxyClassNames()
+        code = new StringBuilder()
+        //注意:javassist的编译器不支持泛型
+        code.append("{\njava.util.ArrayList list = new java.util.ArrayList();\n")
+        generateClasses.each {
+            code.append("list.add(\"" + it + "\");\n")
+        }
+        code.append('return list;\n}')
+        getProxyClassesMethod.insertBefore(code.toString())
+
         ctClass.writeFile(path)
+    }
+
+    private ArrayList<String> generateClasses = new ArrayList<>()
+    private static final String TAG_PROXY = 'com.dovar.router.generate.RouterInitProxy$$'
+
+    void lookupDirectory(File file) {
+        if (file.isDirectory()) {
+            file.listFiles().each { f ->
+                lookupDirectory(f)
+            }
+        } else {
+            String filePath = file.getAbsolutePath().replace(File.separator, '.')
+            //匹配包名与部分文件名
+            if (filePath.contains(TAG_PROXY)) {
+                int index = filePath.lastIndexOf(TAG_PROXY)
+                String entryName = filePath.substring(index)
+//                System.out.println("[INFO] " + entryName)
+                generateClasses.add(entryName.replace('.class',''))
+            }
+        }
+    }
+
+    void lookupJar(JarInput jarInput) {
+        String filePath = jarInput.file.getAbsolutePath()
+
+        if (filePath.endsWith(".jar") && !filePath.contains("com.android.support")
+                && !filePath.contains("/com/android/support")) {
+
+            JarFile jarFile = new JarFile(jarInput.file)
+            Enumeration enumeration = jarFile.entries()
+
+            while (enumeration.hasMoreElements()) {
+                JarEntry jarEntry = (JarEntry) enumeration.nextElement()
+                String entryName = jarEntry.getName().replace('/', '.')
+                //匹配包名与部分文件名
+                if (entryName.contains(TAG_PROXY)) {
+//                    System.out.println("[INFO] " + entryName)
+                    generateClasses.add(entryName.replace('.class',''))
+                }
+            }
+        }
     }
 }
