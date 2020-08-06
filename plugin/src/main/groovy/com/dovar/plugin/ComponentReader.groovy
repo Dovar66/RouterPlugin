@@ -6,6 +6,7 @@ class ComponentReader{
     def manifest
 
     ComponentReader(File filePath) {
+        //XmlSlurper.parse(String uri)在linux上出现MalformedURLException异常，所以使用XmlSlurper.parse(File file)
         manifest = new XmlSlurper().parse(filePath)
     }
 

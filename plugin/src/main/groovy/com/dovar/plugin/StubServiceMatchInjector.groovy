@@ -117,7 +117,10 @@ class StubServiceMatchInjector {
     //这个className含有.class,而实际上要获取CtClass的话只需要前面那部分
     private void doInjectMatchCode(String path) {
         //首先获取服务信息
-        fetchServiceInfo()
+        RouterExtention re = project.RouterPluginConfig
+        if (re.supportMultiProcess) {
+            fetchServiceInfo()
+        }
 
         CtClass ctClass = classPool.getCtClass(STUB_SERVICE_MATCHER)
         if (ctClass.isFrozen()) {
@@ -134,15 +137,18 @@ class StubServiceMatchInjector {
             }
         }
 
-        //注入getTargetService()
-        StringBuilder code = new StringBuilder()
-        //注意:javassist的编译器不支持泛型
-        code.append("{\njava.util.Map matchedServices=new java.util.HashMap();\n")
-        matchedServices.each {
-            code.append("matchedServices.put(\"" + it.getKey() + "\"," + it.getValue() + ".class);\n")
+        StringBuilder code
+        if (re.supportMultiProcess) {
+            //注入getTargetService()
+            code = new StringBuilder()
+            //注意:javassist的编译器不支持泛型
+            code.append("{\njava.util.Map matchedServices=new java.util.HashMap();\n")
+            matchedServices.each {
+                code.append("matchedServices.put(\"" + it.getKey() + "\"," + it.getValue() + ".class);\n")
+            }
+            code.append('return matchedServices;\n}')
+            getTargetServiceMethod.insertBefore(code.toString())
         }
-        code.append('return matchedServices;\n}')
-        getTargetServiceMethod.insertBefore(code.toString())
 
         //注入getProxyClassNames()
         code = new StringBuilder()
@@ -172,7 +178,7 @@ class StubServiceMatchInjector {
                 int index = filePath.lastIndexOf(TAG_PROXY)
                 String entryName = filePath.substring(index)
 //                System.out.println("[INFO] " + entryName)
-                generateClasses.add(entryName.replace('.class',''))
+                generateClasses.add(entryName.replace('.class', ''))
             }
         }
     }
@@ -192,7 +198,7 @@ class StubServiceMatchInjector {
                 //匹配包名与部分文件名
                 if (entryName.contains(TAG_PROXY)) {
 //                    System.out.println("[INFO] " + entryName)
-                    generateClasses.add(entryName.replace('.class',''))
+                    generateClasses.add(entryName.replace('.class', ''))
                 }
             }
         }
