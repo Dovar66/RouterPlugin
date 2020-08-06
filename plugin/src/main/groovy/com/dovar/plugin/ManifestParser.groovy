@@ -7,7 +7,7 @@ import java.util.regex.Pattern
 
 class ManifestParser {
 
-    Set<String> getCustomProcessNames(String manifestPath) {
+    Set<String> getCustomProcessNames(File manifestPath) {
 
         Set<String> processSet = new HashSet<>()
 

@@ -5,7 +5,7 @@ class ComponentReader{
 
     def manifest
 
-    ComponentReader(String filePath) {
+    ComponentReader(File filePath) {
         manifest = new XmlSlurper().parse(filePath)
     }
 

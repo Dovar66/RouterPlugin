@@ -53,7 +53,7 @@ gradlePlugin {
         routerPlugin {
             id = 'com.dovar.router.plugin'
             implementationClass = 'com.dovar.plugin.RouterPlugin'
-            version = '2.0.1'
+            version = '2.0.2'
         }
     }
 }

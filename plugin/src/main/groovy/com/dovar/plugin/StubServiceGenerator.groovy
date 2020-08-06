@@ -59,7 +59,7 @@ class StubServiceGenerator {
         //检测文件是否存在
         if (manifestFile != null && manifestFile.exists()) {
 
-            String serviceManifest = addServiceItem(manifestFile.absolutePath)
+            String serviceManifest = addServiceItem(manifestFile)
 
             writeStubService2File(rootDirPath + File.separator + MATCH_DIR, MATCH_FILE_NAME)
 
@@ -77,7 +77,7 @@ class StubServiceGenerator {
         return matchedServices
     }
     //注意:闭包中只能调用static方法
-    private String addServiceItem(String manifestPath) {
+    private String addServiceItem(File manifestPath) {
         ManifestParser manifestParser = new ManifestParser()
         Set<String> customProcessNames = manifestParser.getCustomProcessNames(manifestPath)
 
